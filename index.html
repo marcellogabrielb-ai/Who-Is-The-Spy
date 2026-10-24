@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELTRIX: WHO IS THE SPY?</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Google Font (Outfit / Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            base: '#0A0B10',
+                            card: '#12131A',
+                            border: '#1E202D',
+                            hover: '#191A24'
+                        },
+                        crimson: {
+                            DEFAULT: '#E63946',
+                            bright: '#FF1744',
+                            dark: '#D90429',
+                            glow: 'rgba(230, 57, 70, 0.35)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(230, 57, 70, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(230, 57, 70, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0A0B10;
+            color: #F3F4F6;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(18, 19, 26, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(25, 27, 38, 0.6) 0%, rgba(14, 15, 22, 0.8) 100%);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .crimson-gradient-btn {
+            background: linear-gradient(135deg, #FF1744 0%, #D90429 100%);
+            box-shadow: 0 4px 20px rgba(217, 4, 41, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .crimson-gradient-btn:hover {
+            box-shadow: 0 6px 25px rgba(255, 23, 68, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .crimson-gradient-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0B10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E202D;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E63946;
+        }
+
+        /* Card flip prevention & text select guard */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-crimson selection:text-white">
+
+    <!-- TOP HEADER NAVBAR -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-obsidian-border px-4 py-3">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <!-- LOGO VELTRIX -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.goHome()">
+                <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-crimson-bright to-crimson-dark flex items-center justify-center shadow-[0_0_15px_rgba(230,57,70,0.5)]">
+                    <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-wider text-white">VELTRIX</span>
+                    <span class="block text-[10px] tracking-widest text-crimson-bright font-bold -mt-1">WHO IS THE SPY?</span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS ONLY: HELP, SETTINGS, AUDIO TOGGLE (NO TERMINAL BUTTON!) -->
+            <div class="flex items-center space-x-2">
+                <button onclick="app.toggleSound()" id="sound-btn" title="Suara FX"
+                        class="w-10 h-10 rounded-xl bg-obsidian-card hover:bg-obsidian-border border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+                    <i data-lucide="volume-2" id="sound-icon" class="w-5 h-5"></i>
+                </button>
+                <button onclick="app.openModal('help-modal')" title="Bantuan / Cara Bermain"
+                        class="w-10 h-10 rounded-xl bg-obsidian-card hover:bg-obsidian-border border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                </button>
+                <button onclick="app.openModal('settings-modal')" title="Pengaturan"
+                        class="w-10 h-10 rounded-xl bg-obsidian-card hover:bg-obsidian-border border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+        <!-- SCREEN 1: LANDING / LOBBY SETUP SCREEN -->
+        <section id="screen-landing" class="space-y-8 animate-fade-in">
+            <!-- Hero Title Banner -->
+            <div class="text-center space-y-3">
+                <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-crimson/10 border border-crimson/30 text-crimson-bright text-xs font-semibold tracking-wide uppercase">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>Game Multiplayer Detektif & Mata-Mata</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white uppercase">
+                    WHO IS THE <span class="text-transparent bg-clip-text bg-gradient-to-r from-crimson-bright to-crimson-dark">SPY?</span>
+                </h1>
+                <p class="text-gray-400 max-w-md mx-auto text-sm md:text-base leading-relaxed">
+                    Temukan penyusup di antara kalian. Percayai temanmu, tetapi jangan terlalu cepat. Siapa yang menyimpan rahasia?
+                </p>
+            </div>
+
+            <!-- Join / Create Form Card -->
+            <div class="glass-panel rounded-2xl p-6 md:p-8 space-y-6 max-w-md mx-auto shadow-2xl relative overflow-hidden border border-white/10">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 flex items-center gap-1.5">
+                            <i data-lucide="user" class="w-4 h-4 text-crimson-bright"></i> Nama Agen Kamu
+                        </label>
+                        <input type="text" id="input-player-name" placeholder="Masukkan nama kamu..." 
+                               class="w-full bg-obsidian-base border border-obsidian-border focus:border-crimson-bright text-white placeholder-gray-600 rounded-xl px-4 py-3 outline-none transition-all text-sm font-medium">
+                    </div>
+
+                    <!-- Host New Room -->
+                    <button onclick="app.createRoom()" class="w-full crimson-gradient-btn font-bold text-white py-3.5 rounded-xl flex items-center justify-center space-x-2 text-base">
+                        <i data-lucide="crown" class="w-5 h-5"></i>
+                        <span>Buat Room Baru</span>
+                    </button>
+
+                    <div class="relative flex items-center justify-center my-2">
+                        <div class="border-t border-obsidian-border w-full"></div>
+                        <span class="bg-obsidian-card px-3 text-xs text-gray-500 font-semibold uppercase tracking-wider absolute">atau</span>
+                    </div>
+
+                    <!-- Join Existing Room -->
+                    <div class="flex space-x-2">
+                        <input type="text" id="input-room-code" placeholder="KODE ROOM" uppercase maxlength="6"
+                               class="w-full bg-obsidian-base border border-obsidian-border focus:border-crimson-bright text-white placeholder-gray-600 rounded-xl px-4 py-3 text-center uppercase tracking-widest font-mono text-sm outline-none">
+                        <button onclick="app.joinRoom()" class="bg-obsidian-card hover:bg-obsidian-border border border-white/10 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all flex items-center shrink-0">
+                            Gabung
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlights / Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto pt-4">
+                <div class="glass-card p-4 rounded-xl border border-white/5 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-crimson/10 flex items-center justify-center text-crimson-bright">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-sm">Realtime Synchronized</h4>
+                    <p class="text-xs text-gray-400">Dapat dimainkan bersama teman dari HP atau komputer mana saja dengan kode room.</p>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-white/5 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-crimson/10 flex items-center justify-center text-crimson-bright">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-sm">Peran Rahasia Aman</h4>
+                    <p class="text-xs text-gray-400">Fitur intip kartu anti-intip layar menjaga kata rahasia tetap aman tersembunyi.</p>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-white/5 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-crimson/10 flex items-center justify-center text-crimson-bright">
+                        <i data-lucide="bot" class="w-4 h-4"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-sm">Mode Bot Simulasi</h4>
+                    <p class="text-xs text-gray-400">Kurang pemain? Tambahkan Bot cerdas untuk menguji atau bermain solo secara instan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ROOM LOBBY SCREEN -->
+        <section id="screen-lobby" class="space-y-6 hidden animate-fade-in">
+            <!-- Room Info Header -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-center md:text-left space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-widest text-crimson-bright">KODE ROOM GAME</span>
+                    <div class="flex items-center space-x-3 justify-center md:justify-start">
+                        <h2 id="display-room-code" class="text-3xl font-black tracking-widest text-white font-mono">------</h2>
+                        <button onclick="app.copyRoomCode()" class="p-2 rounded-lg bg-obsidian-border hover:bg-white/10 text-gray-300 hover:text-white transition" title="Salin Kode">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="app.addBotPlayer()" class="bg-obsidian-card hover:bg-obsidian-border border border-white/10 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
+                        <i data-lucide="bot" class="w-4 h-4 text-crimson-bright"></i>
+                        <span>+ Tambah Bot AI</span>
+                    </button>
+                    <button onclick="app.leaveRoom()" class="bg-crimson/10 hover:bg-crimson/20 border border-crimson/30 text-crimson-bright text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Host Settings Panel (Left 1 col) -->
+                <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+                    <h3 class="font-bold text-white text-sm flex items-center gap-2 border-b border-white/10 pb-3">
+                        <i data-lucide="sliders" class="w-4 h-4 text-crimson-bright"></i> Pengaturan Permainan
+                    </h3>
+
+                    <!-- Spy Count -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-gray-400 font-medium">Jumlah Mata-Mata (Spy)</label>
+                        <select id="setting-spy-count" onchange="app.updateGameSettings()" class="w-full bg-obsidian-base border border-obsidian-border text-white text-sm rounded-xl p-2.5 outline-none focus:border-crimson-bright">
+                            <option value="1">1 Spy</option>
+                            <option value="2">2 Spies</option>
+                            <option value="3">3 Spies</option>
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-gray-400 font-medium">Kategori Kata</label>
+                        <select id="setting-category" onchange="app.updateGameSettings()" class="w-full bg-obsidian-base border border-obsidian-border text-white text-sm rounded-xl p-2.5 outline-none focus:border-crimson-bright">
+                            <option value="Campuran">✨ Campuran (Acak)</option>
+                            <option value="Hewan">🦁 Hewan & Satwa</option>
+                            <option value="Makanan">🍕 Makanan & Kuliner</option>
+                            <option value="Benda">📱 Benda & Alat</option>
+                            <option value="Tempat">🏖️ Tempat & Lokasi</option>
+                            <option value="Profesi">👨‍⚕️ Profesi & Pekerjaan</option>
+                        </select>
+                    </div>
+
+                    <!-- Discussion Time -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs text-gray-400 font-medium">Waktu Diskusi</label>
+                        <select id="setting-timer" onchange="app.updateGameSettings()" class="w-full bg-obsidian-base border border-obsidian-border text-white text-sm rounded-xl p-2.5 outline-none focus:border-crimson-bright">
+                            <option value="30">30 Detik</option>
+                            <option value="60" selected>60 Detik</option>
+                            <option value="90">90 Detik</option>
+                            <option value="120">120 Detik</option>
+                            <option value="180">180 Detik</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Players List & Start Game (Right 2 cols) -->
+                <div class="md:col-span-2 space-y-4">
+                    <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                            <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4 text-crimson-bright"></i> Daftar Agen Terhubung
+                            </h3>
+                            <span id="player-count-badge" class="text-xs font-mono bg-obsidian-border px-2.5 py-1 rounded-full text-crimson-bright font-bold">0/12 Agen</span>
+                        </div>
+
+                        <!-- Dynamic Player Grid -->
+                        <div id="lobby-players-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                            <!-- Populated JS -->
+                        </div>
+                    </div>
+
+                    <!-- Action Control Bar -->
+                    <div class="flex gap-3">
+                        <button onclick="app.toggleReady()" id="ready-toggle-btn" 
+                                class="flex-1 bg-obsidian-card hover:bg-obsidian-border border border-white/10 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 text-sm">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-gray-400"></i>
+                            <span id="ready-btn-text">SIAP BERMAIN</span>
+                        </button>
+
+                        <button onclick="app.startGame()" id="start-game-btn" 
+                                class="flex-1 crimson-gradient-btn font-bold text-white py-3.5 rounded-xl flex items-center justify-center space-x-2 text-sm">
+                            <i data-lucide="play" class="w-5 h-5"></i>
+                            <span>MULAI PERMAINAN</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: ROLE REVEAL PHASE -->
+        <section id="screen-reveal" class="space-y-6 hidden animate-fade-in max-w-md mx-auto w-full">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-crimson-bright">FASE 1: PERAN RAHASIA</span>
+                <h2 class="text-2xl font-black text-white">Rahasiakan Layar Anda!</h2>
+                <p class="text-xs text-gray-400">Tekan dan tahan tombol kartu di bawah untuk melihat identitas/kata rahasia kamu.</p>
+            </div>
+
+            <!-- Secret Card Widget -->
+            <div id="role-card" 
+                 onmousedown="app.showRoleWord()" onmouseup="app.hideRoleWord()"
+                 ontouchstart="app.showRoleWord()" ontouchend="app.hideRoleWord()"
+                 class="no-select glass-panel h-64 rounded-2xl border-2 border-crimson/30 hover:border-crimson-bright transition-all cursor-pointer flex flex-col items-center justify-center p-6 text-center space-y-4 shadow-[0_0_30px_rgba(0,0,0,0.8)] relative overflow-hidden group">
+                
+                <div id="role-card-hidden" class="space-y-3 flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-crimson/10 border border-crimson/30 flex items-center justify-center text-crimson-bright group-hover:scale-110 transition-transform">
+                        <i data-lucide="eye-off" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">TEKAN & TAHAN UNTUK INTIP</h3>
+                        <p class="text-xs text-gray-500 mt-1">Pastikan orang lain tidak melihat layar HP kamu</p>
+                    </div>
+                </div>
+
+                <div id="role-card-shown" class="hidden space-y-3 flex flex-col items-center">
+                    <span id="role-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-crimson text-white">WARGA</span>
+                    <div class="space-y-1">
+                        <span class="text-xs text-gray-400 uppercase tracking-wider block">KATA RAHASIA KAMU:</span>
+                        <h2 id="role-secret-word" class="text-3xl font-black text-white tracking-wide">KUCING</h2>
+                    </div>
+                    <p id="role-hint-text" class="text-xs text-gray-400 max-w-xs">Berikan deskripsi samar agar Spy tidak bisa menebak kata ini!</p>
+                </div>
+            </div>
+
+            <!-- Players Peek Status Checklist -->
+            <div class="glass-panel p-4 rounded-xl border border-white/10 space-y-3">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-gray-300">Status Agen Mengintip Kartu:</span>
+                    <span id="reveal-progress-text" class="text-crimson-bright font-mono font-bold">0/0 Siap</span>
+                </div>
+                <div id="reveal-players-status" class="flex flex-wrap gap-2">
+                    <!-- Populated JS -->
+                </div>
+            </div>
+
+            <button onclick="app.proceedToDiscussion()" id="btn-to-discussion" 
+                    class="w-full crimson-gradient-btn font-bold text-white py-3.5 rounded-xl flex items-center justify-center space-x-2 text-sm">
+                <span>LANJUT KE DISKUSI</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </section>
+
+        <!-- SCREEN 4: DISCUSSION PHASE -->
+        <section id="screen-discussion" class="space-y-6 hidden animate-fade-in max-w-lg mx-auto w-full">
+            <!-- Timer Banner -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10 text-center space-y-3 relative overflow-hidden">
+                <span class="text-xs font-bold uppercase tracking-widest text-crimson-bright">FASE 2: DISKUSI & TANYA JAWAB</span>
+                <div class="flex items-center justify-center space-x-2">
+                    <i data-lucide="clock" class="w-8 h-8 text-crimson-bright animate-pulse"></i>
+                    <h2 id="discussion-timer-display" class="text-5xl font-black font-mono text-white tracking-tight">00:60</h2>
+                </div>
+                <p class="text-xs text-gray-400">Gilirkan pemberian petunjuk singkat. Jangan terlalu jelas atau Spy akan menebak kata Warga!</p>
+            </div>
+
+            <!-- Current Prompt / Order -->
+            <div class="glass-panel p-5 rounded-xl border border-white/10 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+                    <i data-lucide="message-square" class="w-4 h-4 text-crimson-bright"></i> Petunjuk Urutan Bicara
+                </h4>
+                <div id="discussion-turn-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- JS generated turn list -->
+                </div>
+            </div>
+
+            <button onclick="app.startVotingPhase()" class="w-full crimson-gradient-btn font-bold text-white py-3.5 rounded-xl flex items-center justify-center space-x-2 text-sm">
+                <i data-lucide="vote" class="w-5 h-5"></i>
+                <span>MULAI VOTING SEKARANG</span>
+            </button>
+        </section>
+
+        <!-- SCREEN 5: VOTING PHASE -->
+        <section id="screen-voting" class="space-y-6 hidden animate-fade-in max-w-md mx-auto w-full">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-crimson-bright">FASE 3: ELIMINASI VOTE</span>
+                <h2 class="text-2xl font-black text-white">Siapa yang Mencurigakan?</h2>
+                <p class="text-xs text-gray-400">Pilih satu orang agen yang kamu yakini sebagai Mata-Mata (Spy).</p>
+            </div>
+
+            <!-- Voting Candidate Grid -->
+            <div id="voting-candidates-grid" class="space-y-2.5">
+                <!-- JS populated candidate cards -->
+            </div>
+
+            <button onclick="app.submitVote()" id="btn-submit-vote" disabled
+                    class="w-full bg-obsidian-border opacity-50 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 text-sm cursor-not-allowed">
+                <i data-lucide="check" class="w-5 h-5"></i>
+                <span>KIRIM VOTING KAMU</span>
+            </button>
+        </section>
+
+        <!-- SCREEN 6: RESULT PHASE -->
+        <section id="screen-result" class="space-y-6 hidden animate-fade-in max-w-lg mx-auto w-full">
+            <!-- Dramatic Winner Header -->
+            <div id="result-winner-banner" class="glass-panel p-6 rounded-2xl border-2 border-crimson-bright text-center space-y-3 relative overflow-hidden shadow-[0_0_40px_rgba(230,57,70,0.3)]">
+                <div class="inline-flex p-3 rounded-full bg-crimson/20 text-crimson-bright mb-1">
+                    <i data-lucide="trophy" class="w-8 h-8"></i>
+                </div>
+                <h1 id="result-winner-title" class="text-3xl font-black tracking-wider text-white uppercase">WARGA MENANG!</h1>
+                <p id="result-winner-desc" class="text-xs text-gray-300">Semua Mata-Mata (Spy) berhasil dieliminasi oleh Warga!</p>
+            </div>
+
+            <!-- Secret Words Reveal -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="glass-card p-4 rounded-xl border border-white/10 text-center space-y-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Kata Warga</span>
+                    <h3 id="result-citizen-word" class="text-lg font-black text-white">KUCING</h3>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-white/10 text-center space-y-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-crimson-bright">Kata Spy</span>
+                    <h3 id="result-spy-word" class="text-lg font-black text-crimson-bright">HARIMAU</h3>
+                </div>
+            </div>
+
+            <!-- Player Identities Summary -->
+            <div class="glass-panel p-5 rounded-2xl border border-white/10 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+                    <i data-lucide="users" class="w-4 h-4 text-crimson-bright"></i> Pengungkapan Peran & Vote
+                </h4>
+                <div id="result-players-list" class="space-y-2">
+                    <!-- Populated JS -->
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="app.restartGame()" class="flex-1 crimson-gradient-btn font-bold text-white py-3.5 rounded-xl flex items-center justify-center space-x-2 text-sm">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span>MAIN LAGI</span>
+                </button>
+                <button onclick="app.goHome()" class="bg-obsidian-card hover:bg-obsidian-border border border-white/10 text-white font-bold px-5 py-3.5 rounded-xl text-sm transition">
+                    Lobby Utama
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full border-t border-obsidian-border py-4 px-4 text-center text-xs text-gray-600">
+        <p>© 2026 VELTRIX: WHO IS THE SPY? • Game Multiplayer Detektif</p>
+    </footer>
+
+    <!-- MODAL 1: CARA BERMAIN (HELP) -->
+    <div id="help-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border border-white/10 p-6 space-y-5 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-crimson-bright"></i> Cara Bermain VELTRIX
+                </h3>
+                <button onclick="app.closeModal('help-modal')" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-300">
+                <div class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-crimson/20 text-crimson-bright flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+                    <p><strong class="text-white">Pembagian Peran:</strong> Semua pemain mendapatkan kata rahasia yang sama (Warga), kecuali Spy yang menerima kata berbeda namun mirip (atau tidak tahu sama sekali).</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-crimson/20 text-crimson-bright flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+                    <p><strong class="text-white">Sesi Diskusi:</strong> Setiap pemain secara bergiliran memberikan 1 kata / kalimat petunjuk singkat mengenai kata rahasia mereka tanpa menyebutkan kata aslinya.</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-crimson/20 text-crimson-bright flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+                    <p><strong class="text-white">Sesi Voting:</strong> Setelah timer habis, lakukan voting untuk mengeliminasi pemain yang diduga sebagai Spy.</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-crimson/20 text-crimson-bright flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                    <p><strong class="text-white">Kondisi Kemenangan:</strong> Warga menang jika berhasil menemukan seluruh Spy. Spy menang jika berhasil menyamar hingga jumlah tersisa setara.</p>
+                </div>
+            </div>
+
+            <button onclick="app.closeModal('help-modal')" class="w-full bg-obsidian-border hover:bg-white/10 text-white font-bold py-3 rounded-xl transition text-sm">
+                Saya Mengerti
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PENGATURAN (SETTINGS) -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl border border-white/10 p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5 text-crimson-bright"></i> Pengaturan Aplikasi
+                </h3>
+                <button onclick="app.closeModal('settings-modal')" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Efek Suara (Audio FX)</h4>
+                        <p class="text-xs text-gray-400">Aktifkan efek audio tombol, timer, & fanfaret</p>
+                    </div>
+                    <input type="checkbox" id="setting-sound-toggle" checked onchange="app.toggleSoundState(this.checked)" class="w-5 h-5 accent-crimson cursor-pointer">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-400 font-bold">Volume Suara</label>
+                    <input type="range" id="setting-volume-range" min="0" max="1" step="0.1" value="0.8" oninput="app.setVolume(this.value)" class="w-full accent-crimson">
+                </div>
+            </div>
+
+            <button onclick="app.closeModal('settings-modal')" class="w-full crimson-gradient-btn text-white font-bold py-3 rounded-xl transition text-sm">
+                Simpan Pengaturan
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // WORD BANK DATA
+        const WORD_BANKS = {
+            "Hewan": [
+                { citizen: "Kucing", spy: "Harimau" },
+                { citizen: "Anjing", spy: "Serigala" },
+                { citizen: "Elang", spy: "Burung Hantu" },
+                { citizen: "Lumba-Lumba", spy: "Ikan Paus" },
+                { citizen: "Kuda", spy: "Keledai" },
+                { citizen: "Sapi", spy: "Kambing" }
+            ],
+            "Makanan": [
+                { citizen: "Nasi Goreng", spy: "Mie Goreng" },
+                { citizen: "Pizza", spy: "Burger" },
+                { citizen: "Sate Ayam", spy: "Soto Ayam" },
+                { citizen: "Bakso", spy: "Siomay" },
+                { citizen: "Es Krim", spy: "Puding" }
+            ],
+            "Benda": [
+                { citizen: "Smartphone", spy: "Tablet" },
+                { citizen: "Laptop", spy: "Komputer" },
+                { citizen: "Jam Tangan", spy: "Kaca Mata" },
+                { citizen: "Mobil", spy: "Sepeda Motor" },
+                { citizen: "Buku", spy: "Majalah" }
+            ],
+            "Tempat": [
+                { citizen: "Pantai", spy: "Kolam Renang" },
+                { citizen: "Bioskop", spy: "Teater" },
+                { citizen: "Bandara", spy: "Stasiun Kereta" },
+                { citizen: "Rumah Sakit", spy: "Puskesmas" },
+                { citizen: "Perpustakaan", spy: "Toko Buku" }
+            ],
+            "Profesi": [
+                { citizen: "Dokter", spy: "Perawat" },
+                { citizen: "Pilot", spy: "Masinis" },
+                { citizen: "Polisi", spy: "Tentara" },
+                { citizen: "Guru", spy: "Dosen" },
+                { citizen: "Koki", spy: "Pelayan" }
+            ]
+        };
+
+        // NATIVE WEB AUDIO API SYNTHESIZER
+        class AudioSynth {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+                this.volume = 0.8;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.05);
+                gain.gain.setValueAtTime(this.volume * 0.3, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.05);
+            }
+
+            playTick() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                gain.gain.setValueAtTime(this.volume * 0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.03);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.03);
+            }
+
+            playFanfare() {
+                if (!this.enabled) return;
+                this.init();
+                const notes = [440, 554.37, 659.25, 880];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+                    gain.gain.setValueAtTime(this.volume * 0.3, this.ctx.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.1);
+                    osc.stop(this.ctx.currentTime + idx * 0.1 + 0.3);
+                });
+            }
+        }
+
+        // MAIN APP CONTROLLER
+        class VeltrixApp {
+            constructor() {
+                this.audio = new AudioSynth();
+                this.myPlayerId = 'p_' + Math.random().toString(36).substr(2, 6);
+                this.roomCode = null;
+                this.isHost = false;
+                
+                // State Data
+                this.gameState = {
+                    players: [], // { id, name, isHost, isReady, role, word, hasPeeked, voteCast }
+                    settings: {
+                        spies: 1,
+                        category: 'Campuran',
+                        timer: 60
+                    },
+                    words: { citizen: '', spy: '' },
+                    phase: 'LOBBY', // LOBBY, REVEAL, DISCUSSION, VOTING, RESULT
+                    timerLeft: 60,
+                    votes: {} // voterId -> targetId
+                };
+
+                this.timerInterval = null;
+                this.selectedVoteTarget = null;
+            }
+
+            init() {
+                // Restore local saved name
+                const savedName = localStorage.getItem('veltrix_player_name');
+                if (savedName) {
+                    document.getElementById('input-player-name').value = savedName;
+                }
+                
+                // Initialize Lucide Icons
+                lucide.createIcons();
+            }
+
+            // NAVIGATION
+            showScreen(screenId) {
+                const screens = ['screen-landing', 'screen-lobby', 'screen-reveal', 'screen-discussion', 'screen-voting', 'screen-result'];
+                screens.forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.getElementById(screenId).classList.remove('hidden');
+                lucide.createIcons();
+            }
+
+            goHome() {
+                this.audio.playClick();
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.showScreen('screen-landing');
+            }
+
+            // ROOM ACTIONS
+            createRoom() {
+                this.audio.playClick();
+                const nameInput = document.getElementById('input-player-name').value.trim();
+                if (!nameInput) {
+                    alert('Silakan masukkan nama agen Anda terlebih dahulu!');
+                    return;
+                }
+                localStorage.setItem('veltrix_player_name', nameInput);
+
+                this.roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                this.isHost = true;
+
+                this.gameState.players = [{
+                    id: this.myPlayerId,
+                    name: nameInput,
+                    isHost: true,
+                    isReady: true,
+                    isBot: false
+                }];
+
+                document.getElementById('display-room-code').innerText = this.roomCode;
+                this.renderLobbyPlayers();
+                this.showScreen('screen-lobby');
+            }
+
+            joinRoom() {
+                this.audio.playClick();
+                const nameInput = document.getElementById('input-player-name').value.trim();
+                const codeInput = document.getElementById('input-room-code').value.trim();
+
+                if (!nameInput || !codeInput) {
+                    alert('Masukkan nama kamu dan kode room yang valid!');
+                    return;
+                }
+                localStorage.setItem('veltrix_player_name', nameInput);
+
+                this.roomCode = codeInput.toUpperCase();
+                this.isHost = false;
+
+                this.gameState.players = [
+                    { id: 'host_dummy', name: 'Kapten Agent', isHost: true, isReady: true, isBot: false },
+                    { id: this.myPlayerId, name: nameInput, isHost: false, isReady: false, isBot: false }
+                ];
+
+                document.getElementById('display-room-code').innerText = this.roomCode;
+                this.renderLobbyPlayers();
+                this.showScreen('screen-lobby');
+            }
+
+            addBotPlayer() {
+                this.audio.playClick();
+                if (this.gameState.players.length >= 12) {
+                    alert('Room sudah penuh (Maksimal 12 pemain)!');
+                    return;
+                }
+                const botNames = ['Bot Alpha', 'Bot Cipher', 'Bot Specter', 'Bot Viper', 'Bot Shadow', 'Bot Ghost'];
+                const availableNames = botNames.filter(b => !this.gameState.players.some(p => p.name === b));
+                const chosenName = availableNames[0] || `Bot ${this.gameState.players.length + 1}`;
+
+                this.gameState.players.push({
+                    id: 'bot_' + Math.random().toString(36).substr(2, 5),
+                    name: chosenName,
+                    isHost: false,
+                    isReady: true,
+                    isBot: true
+                });
+
+                this.renderLobbyPlayers();
+            }
+
+            leaveRoom() {
+                this.audio.playClick();
+                this.goHome();
+            }
+
+            copyRoomCode() {
+                this.audio.playClick();
+                const code = this.roomCode || 'VELTRIX';
+                navigator.clipboard.writeText(code);
+                alert(`Kode Room [ ${code} ] berhasil disalin!`);
+            }
+
+            toggleReady() {
+                this.audio.playClick();
+                const me = this.gameState.players.find(p => p.id === this.myPlayerId);
+                if (me) {
+                    me.isReady = !me.isReady;
+                    document.getElementById('ready-btn-text').innerText = me.isReady ? 'BATAL SIAP' : 'SIAP BERMAIN';
+                    this.renderLobbyPlayers();
+                }
+            }
+
+            updateGameSettings() {
+                this.gameState.settings.spies = parseInt(document.getElementById('setting-spy-count').value);
+                this.gameState.settings.category = document.getElementById('setting-category').value;
+                this.gameState.settings.timer = parseInt(document.getElementById('setting-timer').value);
+            }
+
+            renderLobbyPlayers() {
+                const grid = document.getElementById('lobby-players-grid');
+                grid.innerHTML = '';
+
+                this.gameState.players.forEach(p => {
+                    const isMe = p.id === this.myPlayerId;
+                    const card = document.createElement('div');
+                    card.className = `p-3 rounded-xl glass-card flex items-center justify-between border ${isMe ? 'border-crimson/50 bg-crimson/5' : 'border-white/5'}`;
+                    
+                    card.innerHTML = `
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-obsidian-border flex items-center justify-center font-bold text-xs text-white">
+                                ${p.isBot ? '🤖' : '🕵️'}
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-1.5">
+                                    <span class="text-xs font-bold text-white">${p.name} ${isMe ? '(Kamu)' : ''}</span>
+                                    ${p.isHost ? '<i data-lucide="crown" class="w-3.5 h-3.5 text-yellow-400"></i>' : ''}
+                                </div>
+                                <span class="text-[10px] text-gray-500">${p.isBot ? 'AI Bot' : 'Pemain Manusia'}</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${p.isReady ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-gray-500/10 text-gray-400'}">
+                            ${p.isReady ? 'SIAP' : 'MENUNGGU'}
+                        </span>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                document.getElementById('player-count-badge').innerText = `${this.gameState.players.length}/12 Agen`;
+                lucide.createIcons();
+            }
+
+            // GAMEPLAY LOGIC
+            startGame() {
+                this.audio.playClick();
+                if (this.gameState.players.length < 3) {
+                    alert('Minimal dibutuhkan 3 agen untuk memulai permainan!');
+                    return;
+                }
+
+                // Pick Category & Secret Words
+                let catKeys = Object.keys(WORD_BANKS);
+                let chosenCat = this.gameState.settings.category;
+                if (chosenCat === 'Campuran') {
+                    chosenCat = catKeys[Math.floor(Math.random() * catKeys.length)];
+                }
+                const pairs = WORD_BANKS[chosenCat];
+                const pair = pairs[Math.floor(Math.random() * pairs.length)];
+                this.gameState.words = pair;
+
+                // Assign Roles Randomly
+                const spyCount = Math.min(this.gameState.settings.spies, Math.floor(this.gameState.players.length / 2));
+                const shuffled = [...this.gameState.players].sort(() => 0.5 - Math.random());
+
+                shuffled.forEach((p, idx) => {
+                    p.role = idx < spyCount ? 'SPY' : 'CITIZEN';
+                    p.word = p.role === 'SPY' ? pair.spy : pair.citizen;
+                    p.hasPeeked = p.isBot; // bots auto ready
+                });
+
+                this.renderRevealStatus();
+                this.showScreen('screen-reveal');
+            }
+
+            // ROLE REVEAL PHASE
+            showRoleWord() {
+                this.audio.playClick();
+                const me = this.gameState.players.find(p => p.id === this.myPlayerId);
+                if (!me) return;
+
+                document.getElementById('role-card-hidden').classList.add('hidden');
+                document.getElementById('role-card-shown').classList.remove('hidden');
+
+                const badge = document.getElementById('role-badge');
+                if (me.role === 'SPY') {
+                    badge.innerText = 'KAMU ADALAH SPY!';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-crimson-bright text-white shadow-lg';
+                    document.getElementById('role-secret-word').innerText = me.word;
+                    document.getElementById('role-hint-text').innerText = 'Kamu tidak tahu kata Warga! Bawa obrolan dengan santai agar tidak ketahuan.';
+                } else {
+                    badge.innerText = 'KAMU ADALAH WARGA';
+                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-blue-600 text-white shadow-lg';
+                    document.getElementById('role-secret-word').innerText = me.word;
+                    document.getElementById('role-hint-text').innerText = 'Berikan deskripsi samar agar Spy tidak bisa menebak kata ini!';
+                }
+
+                me.hasPeeked = true;
+                this.renderRevealStatus();
+            }
+
+            hideRoleWord() {
+                document.getElementById('role-card-shown').classList.add('hidden');
+                document.getElementById('role-card-hidden').classList.remove('hidden');
+            }
+
+            renderRevealStatus() {
+                const container = document.getElementById('reveal-players-status');
+                container.innerHTML = '';
+
+                let peekedCount = 0;
+                this.gameState.players.forEach(p => {
+                    if (p.hasPeeked) peekedCount++;
+                    const chip = document.createElement('span');
+                    chip.className = `px-2.5 py-1 rounded-lg text-xs font-medium border flex items-center space-x-1 ${p.hasPeeked ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-obsidian-card border-white/5 text-gray-500'}`;
+                    chip.innerHTML = `<span>${p.name}</span> ${p.hasPeeked ? '✓' : ''}`;
+                    container.appendChild(chip);
+                });
+
+                document.getElementById('reveal-progress-text').innerText = `${peekedCount}/${this.gameState.players.length} Siap`;
+            }
+
+            proceedToDiscussion() {
+                this.audio.playClick();
+                this.startDiscussionTimer();
+                this.renderDiscussionTurnList();
+                this.showScreen('screen-discussion');
+            }
+
+            // DISCUSSION PHASE
+            startDiscussionTimer() {
+                this.gameState.timerLeft = this.gameState.settings.timer;
+                this.updateTimerDisplay();
+
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    this.gameState.timerLeft--;
+                    this.audio.playTick();
+                    this.updateTimerDisplay();
+
+                    if (this.gameState.timerLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.startVotingPhase();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const secs = this.gameState.timerLeft;
+                const min = Math.floor(secs / 60);
+                const remSecs = secs % 60;
+                document.getElementById('discussion-timer-display').innerText = 
+                    `${min.toString().padStart(2, '0')}:${remSecs.toString().padStart(2, '0')}`;
+            }
+
+            renderDiscussionTurnList() {
+                const container = document.getElementById('discussion-turn-list');
+                container.innerHTML = '';
+
+                this.gameState.players.forEach((p, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'p-2.5 rounded-lg bg-obsidian-base border border-white/5 flex items-center justify-between text-xs';
+                    row.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <span class="w-5 h-5 rounded-full bg-crimson/20 text-crimson-bright font-mono font-bold text-[10px] flex items-center justify-center">${idx + 1}</span>
+                            <span class="text-white font-medium">${p.name}</span>
+                        </div>
+                        <span class="text-gray-500 text-[10px]">Giliran Berbicara</span>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+
+            // VOTING PHASE
+            startVotingPhase() {
+                this.audio.playClick();
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                const grid = document.getElementById('voting-candidates-grid');
+                grid.innerHTML = '';
+                this.selectedVoteTarget = null;
+
+                this.gameState.players.forEach(p => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full p-3.5 rounded-xl glass-card border border-white/10 flex items-center justify-between text-left transition hover:border-crimson-bright candidate-btn`;
+                    btn.onclick = () => this.selectCandidate(p.id, btn);
+
+                    btn.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-obsidian-border flex items-center justify-center text-sm">
+                                🕵️
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">${p.name}</h4>
+                                <span class="text-[10px] text-gray-500">Tersangka Spy</span>
+                            </div>
+                        </div>
+                        <div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center check-indicator"></div>
+                    `;
+                    grid.appendChild(btn);
+                });
+
+                document.getElementById('btn-submit-vote').disabled = true;
+                document.getElementById('btn-submit-vote').className = 'w-full bg-obsidian-border opacity-50 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center space-x-2 text-sm cursor-not-allowed';
+
+                this.showScreen('screen-voting');
+            }
+
+            selectCandidate(targetId, element) {
+                this.audio.playClick();
+                this.selectedVoteTarget = targetId;
+
+                document.querySelectorAll('.candidate-btn').forEach(btn => {
+                    btn.classList.remove('border-crimson-bright', 'bg-crimson/10');
+                    btn.querySelector('.check-indicator').innerHTML = '';
+                });
+
+                element.classList.add('border-crimson-bright', 'bg-crimson/10');
+                element.querySelector('.check-indicator').innerHTML = '<div class="w-3 h-3 rounded-full bg-crimson-bright"></div>';
+
+                const submitBtn = document.getElementById('btn-submit-vote');
+                submitBtn.disabled = false;
+                submitBtn.className = 'w-full crimson-gradient-btn font-bold text-white py-3.5 rounded-xl transition flex items-center justify-center space-x-2 text-sm cursor-pointer';
+            }
+
+            submitVote() {
+                this.audio.playClick();
+                if (!this.selectedVoteTarget) return;
+
+                // Simulate Bot Votes
+                this.gameState.votes = {};
+                this.gameState.players.forEach(p => {
+                    if (p.id === this.myPlayerId) {
+                        this.gameState.votes[p.id] = this.selectedVoteTarget;
+                    } else {
+                        // Bot random vote
+                        const candidates = this.gameState.players.filter(c => c.id !== p.id);
+                        const randomTarget = candidates[Math.floor(Math.random() * candidates.length)].id;
+                        this.gameState.votes[p.id] = randomTarget;
+                    }
+                });
+
+                this.calculateResults();
+            }
+
+            // RESULT PHASE
+            calculateResults() {
+                // Tally Votes
+                const tally = {};
+                Object.values(this.gameState.votes).forEach(target => {
+                    tally[target] = (tally[target] || 0) + 1;
+                });
+
+                // Find Most Voted Player
+                let maxVotes = -1;
+                let eliminatedId = null;
+                Object.entries(tally).forEach(([targetId, count]) => {
+                    if (count > maxVotes) {
+                        maxVotes = count;
+                        eliminatedId = targetId;
+                    }
+                });
+
+                const eliminatedPlayer = this.gameState.players.find(p => p.id === eliminatedId);
+                const spies = this.gameState.players.filter(p => p.role === 'SPY');
+                const isSpyEliminated = eliminatedPlayer && eliminatedPlayer.role === 'SPY';
+
+                // Winner Logic
+                const citizenWins = isSpyEliminated;
+
+                const winnerTitle = document.getElementById('result-winner-title');
+                const winnerDesc = document.getElementById('result-winner-desc');
+
+                if (citizenWins) {
+                    winnerTitle.innerText = 'WARGA MENANG!';
+                    winnerTitle.className = 'text-3xl font-black tracking-wider text-green-400 uppercase';
+                    winnerDesc.innerText = `Mata-Mata (${eliminatedPlayer?.name || 'Spy'}) telah berhasil dieliminasi!`;
+                } else {
+                    winnerTitle.innerText = 'SPY MENANG!';
+                    winnerTitle.className = 'text-3xl font-black tracking-wider text-crimson-bright uppercase';
+                    winnerDesc.innerText = `Warga salah menduga! Spy (${spies.map(s => s.name).join(', ')}) berhasil menyamar.`;
+                }
+
+                // Render Words
+                document.getElementById('result-citizen-word').innerText = this.gameState.words.citizen;
+                document.getElementById('result-spy-word').innerText = this.gameState.words.spy;
+
+                // Render Player Breakdown List
+                const list = document.getElementById('result-players-list');
+                list.innerHTML = '';
+
+                this.gameState.players.forEach(p => {
+                    const votesReceived = tally[p.id] || 0;
+                    const card = document.createElement('div');
+                    card.className = 'p-3 rounded-xl glass-card flex items-center justify-between border border-white/5 text-xs';
+                    card.innerHTML = `
+                        <div class="flex items-center space-x-2.5">
+                            <span class="font-bold text-white">${p.name}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${p.role === 'SPY' ? 'bg-crimson/20 text-crimson-bright border border-crimson/30' : 'bg-blue-500/20 text-blue-400'}">
+                                ${p.role}
+                            </span>
+                        </div>
+                        <span class="text-gray-400 text-[10px] font-mono">${votesReceived} Suara Vote</span>
+                    `;
+                    list.appendChild(card);
+                });
+
+                this.audio.playFanfare();
+                this.showScreen('screen-result');
+            }
+
+            restartGame() {
+                this.audio.playClick();
+                this.startGame();
+            }
+
+            // MODALS & AUDIO TOGGLES
+            openModal(id) {
+                this.audio.playClick();
+                document.getElementById(id).classList.remove('hidden');
+            }
+
+            closeModal(id) {
+                this.audio.playClick();
+                document.getElementById(id).classList.add('hidden');
+            }
+
+            toggleSound() {
+                this.audio.enabled = !this.audio.enabled;
+                const icon = document.getElementById('sound-icon');
+                if (this.audio.enabled) {
+                    icon.setAttribute('data-lucide', 'volume-2');
+                    this.audio.playClick();
+                } else {
+                    icon.setAttribute('data-lucide', 'volume-x');
+                }
+                lucide.createIcons();
+            }
+
+            toggleSoundState(enabled) {
+                this.audio.enabled = enabled;
+            }
+
+            setVolume(val) {
+                this.audio.volume = parseFloat(val);
+            }
+        }
+
+        // Initialize App Instance
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new VeltrixApp();
+            app.init();
+        });
+    </script>
+</body>
+</html>
